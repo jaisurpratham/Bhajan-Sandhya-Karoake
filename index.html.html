@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bhajan Karaoke</title>
+<title>Vijayadashami Bhajan Karaoke</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1220;--panel:#111a2e;--line:#1f2b45;--text:#e8edf7;--dim:#8fa0bf;--accent:#fbbf24;--fs:34px}
+:root{--bg:#2a0a04;--panel:#44110a;--text:#fff1d6;--accent:#ffb300;--fs:34px;--line:color-mix(in srgb,var(--text) 16%,var(--bg));--dim:color-mix(in srgb,var(--text) 58%,var(--bg));--btn:color-mix(in srgb,var(--panel) 88%,var(--text))}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans Devanagari','Nirmala UI','Mangal',system-ui,sans-serif;overflow:hidden}
 button,input,textarea{font:inherit;color:inherit}
-header{height:56px;display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+header{height:56px;display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--panel);border-bottom:2px solid var(--accent);position:relative;z-index:6}
 header h1{font-size:16px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.btn{background:#18233d;border:1px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;min-height:36px}
+.btn{background:var(--btn);border:1px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;min-height:36px}
 .btn:hover{border-color:var(--accent)}
 .fs{display:flex;align-items:center;gap:6px;color:var(--dim);font-size:13px}
 .fs input{width:110px;accent-color:var(--accent)}
@@ -22,27 +22,27 @@ aside .top{padding:10px;display:flex;gap:8px}
 #q{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
 #list{flex:1;overflow:auto;padding:0 8px 8px}
 .item{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
-.item:hover{background:#18233d}
-.item.on{background:#1b2a4a;border-color:var(--accent)}
+.item:hover{background:var(--btn)}
+.item.on{background:color-mix(in srgb,var(--accent) 16%,var(--panel));border-color:var(--accent)}
 .item b{display:block;font-size:15px;font-weight:700}
 .item small{color:var(--dim);font-size:12px}
 aside .foot{padding:8px 10px;border-top:1px solid var(--line);font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
 aside .foot a{color:var(--dim);cursor:pointer;text-decoration:underline}
 main{flex:1;position:relative;min-width:0}
-#stage{height:100%;overflow-y:auto;scroll-behavior:auto;padding:45vh 5vw;text-align:center}
+#stage{position:relative;z-index:1;height:100%;overflow-y:auto;scroll-behavior:auto;padding:45vh 5vw;text-align:center}
 #stage::-webkit-scrollbar{width:0}
 .ln{font-size:var(--fs);line-height:1.7;margin:.35em auto;max-width:1000px;opacity:.38;cursor:pointer;transition:opacity .25s,transform .25s,color .25s;transform:scale(.94)}
-.ln.on{opacity:1;color:var(--accent);font-weight:700;transform:scale(1.1)}
+.ln.on{opacity:1;color:var(--accent);font-weight:700;transform:scale(1.1);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 50%,transparent)}
 .hd{text-align:center;color:var(--dim);margin:0 auto 6vh}
 .hd h2{margin:0;font-size:calc(var(--fs)*.9);color:var(--text)}
 .nav{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
-.nav button{width:56px;height:56px;border-radius:50%;background:#18233dcc;border:1px solid var(--line);font-size:22px;cursor:pointer}
+.nav button{width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--btn) 85%,transparent);border:1px solid var(--line);font-size:22px;cursor:pointer}
 .nav button:active{background:var(--accent);color:#000}
 #prog{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .25s}
 dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;width:min(640px,94vw);padding:16px}
 dialog::backdrop{background:#000a}
 dialog input,dialog textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0}
-dialog textarea{height:50vh;line-height:1.6}
+dialog textarea{height:24vh;line-height:1.6}
 .row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
 #menu{display:none}
 @media(max-width:800px){
@@ -52,6 +52,28 @@ dialog textarea{height:50vh;line-height:1.6}
  .fs input{width:70px}.fs span{display:none}
  .nav{right:8px}.nav button{width:48px;height:48px}
 }
+.ln .rm{display:block;font-size:.58em;font-weight:400;opacity:.8;margin-top:.1em}
+select.btn{padding:6px 8px;max-width:120px}
+#pal{display:none;position:absolute;right:10px;top:60px;z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;width:240px;box-shadow:0 10px 30px #0008}
+#pal.open{display:block}#pal label{display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-size:14px}
+#pal input[type=color]{width:46px;height:30px;border:0;background:none;padding:0;cursor:pointer}
+#presets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}#presets button{border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px}
+dialog small{color:var(--dim)}
+@media(max-width:800px){#fm,#fp{display:none}header{gap:6px;padding:0 8px}.btn{padding:6px 8px}}
+/* Dussehra decor */
+header h1::before{content:"🪔 "}
+header::after{content:"";position:absolute;left:0;right:0;top:100%;height:16px;pointer-events:none;
+ background:linear-gradient(var(--accent),var(--accent)) 0 0/100% 2px no-repeat,radial-gradient(circle at 10px 8px,#ff7a00 0 5px,transparent 6px) 0 0/40px 16px repeat-x,radial-gradient(circle at 30px 8px,#ffc107 0 5px,transparent 6px) 0 0/40px 16px repeat-x}
+main::before{content:"";position:absolute;inset:0;pointer-events:none;
+ background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 65%)}
+main::before{opacity:1}
+.hd::before{content:"॥ विजयादशमी ॥";display:block;color:var(--accent);letter-spacing:.12em;font-size:calc(var(--fs)*.55);margin-bottom:.4em}
+.hd::after{content:"❖ ❖ ❖";display:block;color:var(--accent);opacity:.85;margin-top:.7em;letter-spacing:.5em}
+#sparks{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.sp{position:absolute;bottom:-12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}12%{opacity:.75}100%{transform:translate(var(--dx),-105vh);opacity:0}}
+.nodecor header::after,.nodecor #sparks,.nodecor main::before,.nodecor .hd::before,.nodecor .hd::after,.nodecor header h1::before{display:none}
+@media(prefers-reduced-motion:reduce){#sparks{display:none}}
 </style>
 </head>
 <body>
@@ -59,9 +81,16 @@ dialog textarea{height:50vh;line-height:1.6}
  <button class="btn" id="menu" title="Songs">☰</button>
  <h1 id="ttl">Bhajan Karaoke</h1>
  <label class="fs"><span>Size</span><button class="btn" id="fm">−</button><input id="fz" type="range" min="18" max="90" value="34"><button class="btn" id="fp">+</button></label>
+ <select class="btn" id="sc" title="Script for this bhajan"><option value="dev">देवनागरी</option><option value="rom">Roman</option><option value="both">Both</option></select>
+ <button class="btn" id="pbtn" title="Colours">🎨</button>
  <button class="btn" id="edit" title="Edit lyrics">✎</button>
  <button class="btn" id="full" title="Fullscreen (F)">⛶</button>
 </header>
+<div id="pal"><b>Colours</b><div id="presets"></div>
+ <label>Background <input type="color" id="c_bg"></label><label>Sidebar / header <input type="color" id="c_panel"></label>
+ <label>Text <input type="color" id="c_text"></label><label>Active line <input type="color" id="c_accent"></label>
+ <label>Festive decor <input type="checkbox" id="decor"></label>
+ <button class="btn" id="pr" style="width:100%">Reset colours</button></div>
 <div id="app">
  <aside id="side">
   <div class="top"><input id="q" type="search" placeholder="Search title or first line…"><button class="btn" id="new" title="Add bhajan">＋</button></div>
@@ -69,7 +98,7 @@ dialog textarea{height:50vh;line-height:1.6}
   <div class="foot"><span>Space/↓ next · ↑ prev · R reset</span><a id="reset">Reset data</a></div>
  </aside>
  <main>
-  <div id="stage"></div>
+  <div id="sparks"></div><div id="stage"></div>
   <div class="nav"><button id="up" aria-label="Previous">↑</button><button id="dn" aria-label="Next">↓</button></div>
   <div id="prog"></div>
  </main>
@@ -78,6 +107,8 @@ dialog textarea{height:50vh;line-height:1.6}
  <input id="et" placeholder="Title">
  <input id="es" placeholder="Subtitle (optional)">
  <textarea id="el" placeholder="One lyric line per row"></textarea>
+ <small>Roman version (optional, same line order)</small>
+ <textarea id="er" placeholder="Romanized lines"></textarea>
  <div class="row"><button class="btn" id="edel" style="margin-right:auto">Delete</button><button class="btn" id="ecan">Cancel</button><button class="btn" id="esave" style="border-color:var(--accent)">Save</button></div>
 </dialog>
 <script>
@@ -112,6 +143,33 @@ const DEFAULT_SONGS = [
    "संबंधे थई शून्य जे विचरता, दासत्व धारी रह्या.",
    "आपे अक्षरसुख भक्तजनने, सुहृद बनी सर्वदा.",
    "एवा स्वामी प्रबोधदास गुरुने, भूलकां सहु सेवतां."
+  ],
+  "titleRoman": "Manglaachran",
+  "roman": [
+   "(1) shreemad sad gunshaalinan chidchidi vyaaptan cha divyaakru tim",
+   "Jeeveshaakshramukt-koti sukhdan naikvataaraadhipam",
+   "Gyeyan shree purushottman munivrairvedaikeertyan vibhum",
+   "Tanmoolaakshrayuktmev sahjaanandan cha vande sadaa",
+   "(2) jenun naam ratyaa thakee malin sanklpo samoolaa gayaa,",
+   "Jene sharan thayaa pachhee bhav tanaa phe raa viraamee gayaa;",
+   "Jenun gaan dasho dishe harijno gaaye ati harshthee,",
+   "Evaa ‘yagypurushdaas’ tamne paaye namun preetthee...",
+   "(3) vaanee amrutthee bharee madhusmee sanjeevnee lokmaan,",
+   "Drushtimaan bharee divytaa neerkhataa sudivy bhakto badhaa;",
+   "Haiye het bharyun meethoon jannee shun ne haasy mukhe vasyun,",
+   "Te ‘shree gyaanjee yogeeraaj’ gurune nitye namun bhaavshun.",
+   "(4) deekshaa arpee aho ! gunaateet samee jene guru jogeee,",
+   "‘baapaa’ ne valee aap divy dvaynun advait anokhun ja chhe;",
+   "Bhede saakshee anantnaa, svaroop aa shaastree mahaaraajunun,",
+   "Evaa ‘svaamee hariprsaad’ charne vandan sadaa hun karoon .",
+   "(5) jenee saadhu suvaas aaj jagmaan shreejeesvroope deese,",
+   "Dharm, gyaan, vairaag, bhakti, mahimaa ekai kathee shreshth chhe;",
+   "Bole bol amol shabd madhuraa saakshaat sudhaa to jhare,",
+   "Evaa ‘svaamee hariprsaad’ vibhune snehe namee sau tare.",
+   "(6) jenaa divy sudivy je charitmaan, vilsee hari to rahyaa.",
+   "Sambandhe thaee shoony je vichrataa, daasatv dhaaree rahyaa.",
+   "Aape akshrasukh bhaktjanne, suhrud banee sarvdaa.",
+   "Evaa svaamee prabodhdaas gurune, bhoolkaan sahu sevtaan."
   ]
  },
  {
@@ -133,6 +191,23 @@ const DEFAULT_SONGS = [
    "सहु हरिभक्तने रे, रहेवुं होये मारे पास; तो तमे मेलजो रे, मिथ्या पंचविषयनी आश... ३",
    "मुज विना जाणजो रे, बीजा मायिक सहु आकार; प्रीति तोडजो रे, जूठां जाणी कु टुंब परिवार... ४",
    "सहु तमे पाळजो रे, सर्वे द्रढ करी मारां नेम; तम पर रीझशे रे, धर्मने भक्ति करशे क्षेम... ५"
+  ],
+  "titleRoman": "Bolyaa shree hari re",
+  "roman": [
+   "Bolyaa shree hari re, saambhlo narnaaree harijan; maare ek vaartaa re, sahune sambhlaavyaanun chhe man... 1",
+   "Maaree moorti re, maaraa lok bhog ne mukt; sarve divy chhe re, tyaan to joyaanee chhe jukt... 2",
+   "Maaroon dhaam chhe re, akshar amrut jenun naam; sarve saamrthee re, shakti gune karee abhiraam... 3",
+   "Ati tejomay re, ravi shashee kotik vaarne jaay; sheetal shaant chhe re, tejnee upmaa nav devaay... 4",
+   "Temaan hun rahoon re, dvibhuj divy sadaa saakaar; durlabh devne re, maaro koee na paame paar... 5",
+   "Jeev eeshvar tano re, maayaa kaal purush pradhaan; sahune vash karoon re, sahuno prerak hun bhagvaan... 6",
+   "Agnit vishvnee re, utptti paalan pralay thaay; maaree marjee vinaa re, koeethee tarnun nav todaay... 7",
+   "Em mane jaanjo re, maaraan aashrit sau narnaaree; men tam aagle re, vaartaa saty kahee chhe maaree... 8",
+   "Hun to tam kaaran re, aavyo dhaam thakee dharee deh; premaanandno re, vaa’lo varsyaa amrut meh... 9",
+   "Valee sahu saambhlo re, maaree vaartaa param anoop; param siddhaant chhe re, sahune hitkaaree sukhroop... 1",
+   "Sahu haribhktane re, jaavun hoye maare dhaam; to mane sevjo re, tame shuddh bhaave thaee nishkaam... 2",
+   "Sahu haribhktane re, rahevun hoye maare paas; to tame meljo re, mithyaa panchvishyanee aash... 3",
+   "Muj vinaa jaanjo re, beejaa maayik sahu aakaar; preeti todjo re, joothaan jaanee ku tumb parivaar... 4",
+   "Sahu tame paaljo re, sarve dradh karee maaraan nem; tam par reejhshe re, dharmne bhakti karshe kshem... 5"
   ]
  },
  {
@@ -157,6 +232,26 @@ const DEFAULT_SONGS = [
    "हे बारे मंदिर म्हाले रे, बस तुं तुं तुं,",
    "मारा मननो मोर तुं, मारा चित्तनो चोर तुं,",
    "मारूं काळजुं कोरे तुं, बस तुं तुं... हे... बारे मंदिर..."
+  ],
+  "titleRoman": "Maare mandir mhaale re",
+  "roman": [
+   "He... premtanaa... premtanaa... pagthaare pushpon paathreee het karee",
+   "He... prem sugandh sameer laheraaye e ja re... he maaro aatam naache preet karee",
+   "He baare mandir mhaale re, bas tun tun tun,",
+   "Maaraa manno mor tun, maaraa chittno chor tun,",
+   "Maaroon kaaljun kore tun, bas tun tun... he baare mandir...",
+   "Maaree mast majaa re, bas tun tun tun,",
+   "Maaraa vyomno sooraj tun, sheetal shardachandr tun,",
+   "Maaro dhruvtaarak tun, bas tun tun tun... he... baare mandir...",
+   "Maaraa sukhno sameer re, bas tun tun tun,",
+   "Maaraa sukhnun vaadal tun, maaraa sukhnee varshaa tun,",
+   "Maaro sukh kalaapee tun, bas tun tun tun... he... baare mandir...",
+   "Maaro jeevan-saagar re, bas tun tun tun,",
+   "Maaree jeevnanaiyaa tun, maaro jeevan naavik tun,",
+   "Maaro jeevnaaaro tun, bas tun tun tun...",
+   "He baare mandir mhaale re, bas tun tun tun,",
+   "Maaraa manno mor tun, maaraa chittno chor tun,",
+   "Maaroon kaaljun kore tun, bas tun tun... he... baare mandir..."
   ]
  },
  {
@@ -176,6 +271,21 @@ const DEFAULT_SONGS = [
    "फिर अंत समय में प्राण तजूँ, साकार तुम्हारे हाथों में...",
    "मुझमें और तुझमें भेद यही, मैं नर हूँ तुम नारायण हो,",
    "मैं हूँ संसार के हाथों में, संसार तुम्हारे हाथों में..."
+  ],
+  "titleRoman": "Ab saump diyaa is jeevan kaa",
+  "roman": [
+   "Ab saump diyaa is jeevan kaa, sab bhaar tumhaare haathon men...",
+   "Hai jeet tumhaare haathon men, aur haar tumhaare haathon men...",
+   "Meraa nishchay hai bas ek yahee, ek baar tumhen paa jaaoon main...",
+   "Arpan kar doon duniyaa bhar kaa, sab pyaar tumhaare charnon men...",
+   "Jo jag men rahoon to aise rahoon, jyon jal men kamal kaa phoo la rahe...",
+   "Mere sab gun dosh samrpit hon, bhagvaan tumhaare haathon men...",
+   "Yadi maanav kaa mujhe janm mile, to tav charnon kaa pujaaree banoon...",
+   "Is poojak kee ek-ek rag kaa, ho taar tumhaare haathon men...",
+   "Jab jab sansaar kaa kai dee banoon, nishkaam bhaav se karm karoon ...",
+   "Phir ant samay men praan tajoon, saakaar tumhaare haathon men...",
+   "Mujhmen aur tujhmen bhed yahee, main nar hoon tum naaraayan ho,",
+   "Main hoon sansaar ke haathon men, sansaar tumhaare haathon men..."
   ]
  },
  {
@@ -198,6 +308,24 @@ const DEFAULT_SONGS = [
    "व्हाला... हैयाना हार हुं पहेरावुं रे... एकवार... एकवार...",
    "प्रगट प्रभुजीनी आरती उतारुं...(२)",
    "व्हाला... भवजळ हुं तरी जाउं रे... एकवार... एकवार..."
+  ],
+  "titleRoman": "Ekvaar ekvaar ekvaar yogee",
+  "roman": [
+   "Ekvaar ekvaar ekvaar yogee... baare mandiriye aavo re...",
+   "Baare mandiriye aavo maaraa vhaalaa...(2)",
+   "Maaraan aangniyaan shobhaavo re... ekvaar... ekvaar...",
+   "Aavo to aangnaamaan saathiyaa pooraavun...(2)",
+   "Vhaalaa... chandnanaan leempan leen paavun re... ekvaar... ekvaar...",
+   "Aasopaalvanaan toran bandhaavun...(2)",
+   "Vhaalaa... attranaan chhaantnaan chhantaavun re... ekvaar... ekvaar...",
+   "Rangrangnaa hun to gaaleechaa bichhaavun...(2)",
+   "Vhaalaa... sugandhee phoo lo veraavun re... ekvaar... ekvaar...",
+   "Sonaa-roopaano hun to haar banaavun...(2)",
+   "Vhaalaa... heernee doreee goonthaavun re.. ekvaar... ekvaar...",
+   "Oon chaa aasne tamne padhraavun...(2)",
+   "Vhaalaa... haiyaanaa haar hun paheraavun re... ekvaar... ekvaar...",
+   "Pragat prabhujeenee aartee utaarun...(2)",
+   "Vhaalaa... bhavjal hun taree jaaun re... ekvaar... ekvaar..."
   ]
  },
  {
@@ -219,6 +347,23 @@ const DEFAULT_SONGS = [
    "मनडां स्वामीजी सौनां पलमां ले पामी, सुखिया करीने सौने बक्षी दे माफी...",
    "जगमां आवो जादुवाळो, क्यांय अमे ना भाळ्यो..",
    "रंग लाग्यो स्वामीजी मारा हैये..."
+  ],
+  "titleRoman": "Rang laagyo svaameejee maaraa haiye",
+  "roman": [
+   "Rang laagyo, svaameejee maaraa haiye, ke gun taaraa gaie...",
+   "Vhaaleedaa pooraa bhaavthee-ame nathee re beetaan sansaarthee...",
+   "Mukhdun joee ne mane rang taaro laagyo, maaraa jeevnamaan men to saath taaro maangyo",
+   "O re svaameejee kaaman en shun keedhun, manmaan vasee ne maaroon man haree leedhun...",
+   "Haath den jhaalyo - bhavbhay taalyo - phe ro suphal thayo maaro...",
+   "Rang laagyo svaameejee maaraa haiye...",
+   "Lagnee laagee chhe mane ek taaraa naamnee, duniyaanee lok laaj maare nathee kaamnee...",
+   "Aatam antramaan prabhu aavee biraajo, bhavbhavno saathvaaro ek have taaro...",
+   "Darshan aapyaan - duhkhdaan taalyaan... dhany jeevan den banaavyaan...",
+   "Rang laagyo svaameejee maaraa haiye...",
+   "Darshan tamaaraan saunaan duhkh detaan kaapee, bhakti karaave svaamee aanand aapee...",
+   "Mandaan svaameejee saunaan palmaan le paamee, sukhiyaa kareene saune bakshee de maaphee...",
+   "Jagmaan aavo jaaduvaalo, kyaany ame naa bhaalyo..",
+   "Rang laagyo svaameejee maaraa haiye..."
   ]
  },
  {
@@ -238,6 +383,21 @@ const DEFAULT_SONGS = [
    "स्वामि ! मारा हृदयामां, तारूं नाम भरी देजे...",
    "तारा विना दुनियामां, हरि ! कोई नथी मारूं ...",
    "भूलकुं बनूं तारूं , एवा आशिष दई देजे... श्रीजी ! मारा हैयामां..."
+  ],
+  "titleRoman": "Tame kaliyaa baliyaa chhaliyaa mahaaraaj",
+  "roman": [
+   "Tame kaliyaa, baliyaa, chhaliyaa mahaaraaj, taaree leelaayun aprampaar...",
+   "Taaree leelaayun aprampaar, taaree leelaayun aprampaar... tame kaliyaa...",
+   "Kartum, akrtum taaree karaamaat, koeethee naa e kalaaye;",
+   "Anythaa kartum tun to re svaami, reteemaan vhaan chalaave re... tame kaliyaa...",
+   "Manno kaljug maajhaa mooke tyaare, hakhal-dakhal bahu laaye;",
+   "Chaare jugthee tun to re judo, taaree sanmukh chalaave re... tame kaliyaa...",
+   "Bhoolkaannaa pathno hun to pravaasee, bhoolo padoon hun jyaare;",
+   "Jagdeesh tun to jeevne re jaalve, jatan kare ati vhaale re... tame kaliyaa...",
+   "Shreejee ! maaraa haiyaamaan, taaree bhakti bharee deje...",
+   "Svaami ! maaraa hrudyaamaan, taaroon naam bharee deje...",
+   "Taaraa vinaa duniyaamaan, hari ! koee nathee maaroon ...",
+   "Bhoolkun banoon taaroon , evaa aashish daee deje... shreejee ! maaraa haiyaamaan..."
   ]
  },
  {
@@ -258,6 +418,22 @@ const DEFAULT_SONGS = [
    "मुझको तेरा दामन है बिस्तर कलियों का",
    "जहाँ पर हैं तेरी बाहें, मेरी जन्नत भी वहीं है",
    "महबूब मेरे, महबूब मेरे"
+  ],
+  "titleRoman": "Mahboob mere",
+  "roman": [
+   "Mahboob mere, mahboob mere",
+   "Too hai to duniyaa kitnee haseen hai",
+   "Jo too naheen to ku chha bhee naheen hai",
+   "Mahboob mere, mahboob mere",
+   "Too ho to barh jaatee hai qeemat mausam kee",
+   "Too ho to barh jaatee hai qeemat mausam kee",
+   "Ye jo teree aankhen hain, sholaa-shabnam see",
+   "Yaheen marnaa bhee hai mujh ko, mujhe jeenaa bhee yaheen hai",
+   "Mahboob mere, mahboob mere",
+   "Armaan kisko jannat kee rangeen galiyon kaa",
+   "Mujhko teraa daaman hai bistar kaliyon kaa",
+   "Jahaan par hain teree baahen, meree jannat bhee vaheen hai",
+   "Mahboob mere, mahboob mere"
   ]
  },
  {
@@ -284,6 +460,28 @@ const DEFAULT_SONGS = [
    "मायिक मनबुद्धिए करीने ए दिव्य दर्शन थाय न मने,",
    "कृ पा करीने दृष्टि तुं देजे, तारा सहुए दिव्य मनाय, तुजमां सहज खोवाई जवाय,",
    "सुहृदसिंधु ! आत्મીય-संबंध करवा, करीए सहुनो स्वीकार... तारूं भूलकुं बनावजे..."
+  ],
+  "titleRoman": "Akshradhaamnaa adhipteeshree",
+  "roman": [
+   "Akshradhaamnaa adhipteeshree ! tun chhe am aatam aadhaar,",
+   "Chaitnyashilpee guruhrivar tun ek ja chhe am aadhaar,",
+   "Taaroon bhoolkun banaavje amne praartheee tav charnomaan sadaa...",
+   "Anantlok ne anantdhaam chhe, avaantramaan ame kyaan?",
+   "Anant brahmaandnaa anant jeevo, emaan hamaaree hastee kyaan?",
+   "Taaree divy shakti aangal, amaaroon astitv kyaan ? (2)",
+   "Taaree aangal shoony ame sau, tun chhe sarvopree samraat... taaroon bhoolkun banaavje...",
+   "Je kaanee aavyun ne aavee rahyun chhe ane je aavshe aatmamaan,",
+   "E sarveno daataa tun chhe, jaagrat raakhje jeevnamaan,",
+   "Taare aadheen chhe samagr tantr, vyaapak chhe tun samstamaan (2)",
+   "Ame to taaroon sarjan chheee, tun chhe amaaro sarjnahaar... taaroon bhoolkun banaavje...",
+   "Ati saamrthee taaree chhataanye saunee charnaraj banyo tun,",
+   "Kalpnaateeth svaroop taaroon toye, bhaktonoon bhoolkun banyo tun,",
+   "Daasnaa daas thaeene rahyaa je, enaa range raachyo tun (2)",
+   "Taaraa bhaktonee bhakti karvaa, bal deje tun akhoot apaar... taaroon bhoolkun banaavje...",
+   "Sadaa divy saakaar svaroop tun, sambandhvaalaa sahu divy ja chhe,",
+   "Maayik manbuddhie kareene e divy darshan thaay na mane,",
+   "Kru paa kareene drushti tun deje, taaraa sahue divy manaay, tujmaan sahaj khovaaee javaay,",
+   "Suhrudsindhu ! aatmeey-sambandh karvaa, kareee sahuno sveekaar... taaroon bhoolkun banaavje..."
   ]
  }
 ];
@@ -292,14 +490,14 @@ const KEY='bhajan_songs_v1';
 const $=id=>document.getElementById(id);
 let songs=load(), cur=songs[0]?.id, idx=0, editing=null;
 
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length)return s}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_SONGS))}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length){s.forEach(x=>{const d=DEFAULT_SONGS.find(y=>y.id===x.id);if(d&&!x.roman&&d.lines.length===x.lines.length){x.roman=d.roman;x.titleRoman=d.titleRoman}});return s}}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_SONGS))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(songs))}catch(e){}}
 const song=()=>songs.find(s=>s.id===cur)||songs[0];
 
 function renderList(){
  const t=$('q').value.trim().toLowerCase();
  $('list').innerHTML='';
- songs.filter(s=>!t||(s.title+' '+(s.subtitle||'')+' '+(s.lines[0]||'')).toLowerCase().includes(t)).forEach(s=>{
+ songs.filter(s=>!t||(s.title+' '+(s.titleRoman||'')+' '+(s.subtitle||'')+' '+(s.lines[0]||'')+' '+((s.roman&&s.roman[0])||'')).toLowerCase().includes(t)).forEach(s=>{
   const d=document.createElement('div');d.className='item'+(s.id===cur?' on':'');
   d.innerHTML='<b></b><small></small>';d.firstChild.textContent=s.title;d.lastChild.textContent=s.subtitle||'';
   d.onclick=()=>{openSong(s.id);$('side').classList.remove('open')};
@@ -309,12 +507,16 @@ function renderList(){
 function openSong(id){cur=id;idx=0;renderSong();renderList()}
 function renderSong(){
  const s=song();if(!s){$('stage').innerHTML='';return}
- $('ttl').textContent=s.title;
+ $('ttl').textContent=s.title;$('sc').value=modeOf(s);$('sc').disabled=!(s.roman&&s.roman.length);const m=modeOf(s);
  const st=$('stage');st.innerHTML='';
  const h=document.createElement('div');h.className='hd';
- h.innerHTML='<h2></h2><div></div>';h.firstChild.textContent=s.title;h.lastChild.textContent=s.subtitle||'';
+ h.innerHTML='<h2></h2><div></div>';h.firstChild.textContent=(m==='rom'&&s.titleRoman)||s.title;h.lastChild.textContent=s.subtitle||'';
  st.appendChild(h);
- s.lines.forEach((l,i)=>{const p=document.createElement('div');p.className='ln';p.textContent=l;p.onclick=()=>go(i);st.appendChild(p)});
+ s.lines.forEach((l,i)=>{const p=document.createElement('div');p.className='ln';const r=(s.roman&&s.roman[i])||l;
+  if(m==='rom')p.textContent=r;
+  else if(m==='both'&&r!==l){p.textContent=l;const x=document.createElement('span');x.className='rm';x.textContent=r;p.appendChild(x)}
+  else p.textContent=l;
+  p.onclick=()=>go(i);st.appendChild(p)});
  st.scrollTop=0;go(0,true);
 }
 function go(i,instant){
@@ -335,7 +537,7 @@ function setFs(v){v=Math.max(18,Math.min(90,+v));document.documentElement.style.
 function toggleFull(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()}
 
 document.addEventListener('keydown',e=>{
- if(e.target.matches('input,textarea')||$('dlg').open)return;
+ if(e.target.matches('input,textarea,select')||$('dlg').open)return;if(e.target.matches('button'))e.target.blur();
  const k=e.key;
  if([' ','ArrowDown','PageDown'].includes(k)){e.preventDefault();go(idx+1)}
  else if(['ArrowUp','PageUp'].includes(k)){e.preventDefault();go(idx-1)}
@@ -353,16 +555,16 @@ window.addEventListener('resize',()=>center(true));
 
 /* editor: stored in this browser's localStorage */
 function openEditor(s){
- editing=s;$('et').value=s?s.title:'';$('es').value=s?s.subtitle||'':'';$('el').value=s?s.lines.join('\n'):'';
+ editing=s;$('et').value=s?s.title:'';$('es').value=s?s.subtitle||'':'';$('el').value=s?s.lines.join('\n'):'';$('er').value=s&&s.roman?s.roman.join('\n'):'';
  $('edel').style.display=s?'':'none';$('dlg').showModal();
 }
 $('edit').onclick=()=>openEditor(song());
 $('new').onclick=()=>openEditor(null);
 $('ecan').onclick=()=>$('dlg').close();
 $('esave').onclick=()=>{
- const lines=$('el').value.split('\n').map(l=>l.trim()).filter(Boolean),title=$('et').value.trim()||'Untitled';
- if(editing){Object.assign(editing,{title,subtitle:$('es').value.trim(),lines});cur=editing.id}
- else{const n={id:'c'+Date.now(),title,subtitle:$('es').value.trim(),lines};songs.push(n);cur=n.id}
+ const lines=$('el').value.split('\n').map(l=>l.trim()).filter(Boolean),title=$('et').value.trim()||'Untitled',roman=$('er').value.split('\n').map(l=>l.trim()).filter(Boolean);
+ if(editing){Object.assign(editing,{title,subtitle:$('es').value.trim(),lines,roman});cur=editing.id}
+ else{const n={id:'c'+Date.now(),title,subtitle:$('es').value.trim(),lines,roman};songs.push(n);cur=n.id}
  save();$('dlg').close();idx=0;renderSong();renderList();
 };
 $('edel').onclick=()=>{
@@ -374,6 +576,27 @@ $('reset').onclick=()=>{
  try{localStorage.removeItem(KEY)}catch(e){}
  songs=load();cur=songs[0]?.id;renderSong();renderList();
 };
+/* per-bhajan script mode */
+const MK='bhajan_mode_v1';let modes={};try{modes=JSON.parse(localStorage.getItem(MK))||{}}catch(e){}
+function modeOf(s){return modes[s.id]||'dev'}
+$('sc').onchange=e=>{modes[song().id]=e.target.value;try{localStorage.setItem(MK,JSON.stringify(modes))}catch(_){}e.target.blur();const k=idx;renderSong();go(k,true)};
+/* colour themes */
+const THEMES={Dussehra:{bg:'#2a0a04',panel:'#44110a',text:'#fff1d6',accent:'#ffb300'},Navy:{bg:'#0b1220',panel:'#111a2e',text:'#e8edf7',accent:'#fbbf24'},Black:{bg:'#000000',panel:'#0d0d0d',text:'#f2f2f2',accent:'#ffd54a'},Saffron:{bg:'#2a1205',panel:'#3a1b09',text:'#ffe9cf',accent:'#ff9933'},Light:{bg:'#fbf7ef',panel:'#efe7d6',text:'#2a2118',accent:'#c2410c'}};
+const TK='bhajan_theme_v2';let theme={...THEMES.Dussehra};try{Object.assign(theme,JSON.parse(localStorage.getItem(TK)))}catch(e){}
+function applyTheme(){for(const k in THEMES.Navy){document.documentElement.style.setProperty('--'+k,theme[k]);$('c_'+k).value=theme[k]}try{localStorage.setItem(TK,JSON.stringify(theme))}catch(e){}}
+for(const k in THEMES.Navy)$('c_'+k).oninput=e=>{theme[k]=e.target.value;applyTheme()};
+Object.keys(THEMES).forEach(n=>{const b=document.createElement('button');const t=THEMES[n];b.textContent=n;b.style.cssText=`background:${t.bg};color:${t.accent};border:1px solid ${t.text}`;b.onclick=()=>{theme={...t};applyTheme()};$('presets').appendChild(b)});
+$('pr').onclick=()=>{theme={...THEMES.Dussehra};applyTheme()};
+$('pbtn').onclick=()=>$('pal').classList.toggle('open');
+document.addEventListener('click',e=>{if(!e.target.closest('#pal,#pbtn'))$('pal').classList.remove('open')});
+/* festive decor: sparks + toggle */
+for(let i=0;i<22;i++){const s=document.createElement('span'),z=3+Math.random()*4;s.className='sp';
+ s.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;--dx:${(Math.random()*120-60)|0}px;animation-duration:${7+Math.random()*7}s;animation-delay:${-Math.random()*14}s`;$('sparks').appendChild(s)}
+const DK='bhajan_decor_v1';let decor=true;try{decor=localStorage.getItem(DK)!=='0'}catch(e){}
+function applyDecor(){document.body.classList.toggle('nodecor',!decor);$('decor').checked=decor}
+$('decor').onchange=e=>{decor=e.target.checked;try{localStorage.setItem(DK,decor?'1':'0')}catch(_){}applyDecor()};
+applyDecor();
+applyTheme();
 renderList();renderSong();
 </script>
 </body>
