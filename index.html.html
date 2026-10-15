@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhajan Karaoke</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1220;--panel:#111a2e;--line:#1f2b45;--text:#e8edf7;--dim:#8fa0bf;--accent:#fbbf24;--fs:34px}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans Devanagari','Nirmala UI','Mangal',system-ui,sans-serif;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+header{height:56px;display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+header h1{font-size:16px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{background:#18233d;border:1px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;min-height:36px}
+.btn:hover{border-color:var(--accent)}
+.fs{display:flex;align-items:center;gap:6px;color:var(--dim);font-size:13px}
+.fs input{width:110px;accent-color:var(--accent)}
+#app{display:flex;height:calc(100% - 56px);position:relative}
+aside{width:300px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;flex-shrink:0;transition:transform .25s}
+aside .top{padding:10px;display:flex;gap:8px}
+#q{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+#list{flex:1;overflow:auto;padding:0 8px 8px}
+.item{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.item:hover{background:#18233d}
+.item.on{background:#1b2a4a;border-color:var(--accent)}
+.item b{display:block;font-size:15px;font-weight:700}
+.item small{color:var(--dim);font-size:12px}
+aside .foot{padding:8px 10px;border-top:1px solid var(--line);font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
+aside .foot a{color:var(--dim);cursor:pointer;text-decoration:underline}
+main{flex:1;position:relative;min-width:0}
+#stage{height:100%;overflow-y:auto;scroll-behavior:auto;padding:45vh 5vw;text-align:center}
+#stage::-webkit-scrollbar{width:0}
+.ln{font-size:var(--fs);line-height:1.7;margin:.35em auto;max-width:1000px;opacity:.38;cursor:pointer;transition:opacity .25s,transform .25s,color .25s;transform:scale(.94)}
+.ln.on{opacity:1;color:var(--accent);font-weight:700;transform:scale(1.1)}
+.hd{text-align:center;color:var(--dim);margin:0 auto 6vh}
+.hd h2{margin:0;font-size:calc(var(--fs)*.9);color:var(--text)}
+.nav{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
+.nav button{width:56px;height:56px;border-radius:50%;background:#18233dcc;border:1px solid var(--line);font-size:22px;cursor:pointer}
+.nav button:active{background:var(--accent);color:#000}
+#prog{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .25s}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;width:min(640px,94vw);padding:16px}
+dialog::backdrop{background:#000a}
+dialog input,dialog textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0}
+dialog textarea{height:50vh;line-height:1.6}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+#menu{display:none}
+@media(max-width:800px){
+ #menu{display:inline-block}
+ aside{position:absolute;z-index:5;height:100%;transform:translateX(-100%);width:84%}
+ aside.open{transform:none}
+ .fs input{width:70px}.fs span{display:none}
+ .nav{right:8px}.nav button{width:48px;height:48px}
+}
+</style>
+</head>
+<body>
+<header>
+ <button class="btn" id="menu" title="Songs">☰</button>
+ <h1 id="ttl">Bhajan Karaoke</h1>
+ <label class="fs"><span>Size</span><button class="btn" id="fm">−</button><input id="fz" type="range" min="18" max="90" value="34"><button class="btn" id="fp">+</button></label>
+ <button class="btn" id="edit" title="Edit lyrics">✎</button>
+ <button class="btn" id="full" title="Fullscreen (F)">⛶</button>
+</header>
+<div id="app">
+ <aside id="side">
+  <div class="top"><input id="q" type="search" placeholder="Search title or first line…"><button class="btn" id="new" title="Add bhajan">＋</button></div>
+  <div id="list"></div>
+  <div class="foot"><span>Space/↓ next · ↑ prev · R reset</span><a id="reset">Reset data</a></div>
+ </aside>
+ <main>
+  <div id="stage"></div>
+  <div class="nav"><button id="up" aria-label="Previous">↑</button><button id="dn" aria-label="Next">↓</button></div>
+  <div id="prog"></div>
+ </main>
+</div>
+<dialog id="dlg">
+ <input id="et" placeholder="Title">
+ <input id="es" placeholder="Subtitle (optional)">
+ <textarea id="el" placeholder="One lyric line per row"></textarea>
+ <div class="row"><button class="btn" id="edel" style="margin-right:auto">Delete</button><button class="btn" id="ecan">Cancel</button><button class="btn" id="esave" style="border-color:var(--accent)">Save</button></div>
+</dialog>
+<script>
+/* ---- LYRICS DATA: add/edit songs here. Format: { id, title, subtitle, lines: [...] } ---- */
+const DEFAULT_SONGS = [
+ {
+  "id": 1,
+  "title": "मंगळाचरण",
+  "subtitle": "मंगळ प्रार्थना अने वंदना",
+  "lines": [
+   "(१) श्रीमद् सद् गुणशालिनं चिदचिदि व्याप्तं च दिव्याकृ तिम",
+   "जीवेशाक्षरमुक्त-कोटि सुखदं नैकवताराधिपम ।",
+   "ज्ञेयं श्री पुरुषोत्तमं मुनिवरैर्वेदैकीर्त्यं विभुम",
+   "तन्मूलाक्षरयुक्तमेव सहजानंदं च वन्दे सदा ॥",
+   "(२) जेनुं नाम रट्या थकी मलिन संकल्पो समूळा गया,",
+   "जेने शरण थया पछी भव तणा फे रा विरामी गया;",
+   "जेनुं गान दशो दिशे हरिजनो गाये अति हर्षथी,",
+   "एवा ‘यज्ञपुरुषदास’ तमने पाये नमुं प्रीतथी...",
+   "(३) वाणी अमृतथी भरी मधुसमी संजीवनी लोकमां,",
+   "दृष्टिमां भरी दिव्यता नीरखता सुदिव्य भकतो बधा;",
+   "हैये हेत भर्युं मीठूं जननी शुं ने हास्य मुखे वस्युं,",
+   "ते ‘श्री ज्ञानजी योगीराज’ गुरुने नित्ये नमुं भावशुं.",
+   "(४) दीक्षा अर्पी अहो ! गुणातीत समी जेने गुरु जोगीए,",
+   "‘बापा’ ने वळी आप दिव्य द्वयनुं अद्वैत अनोखुं ज छे;",
+   "भेदे साक्षी अनंतना, स्वरूप आ शास्त्री महाराजुनुं,",
+   "एवा ‘स्वामी हरिप्रसाद’ चरणे वंदन सदा हुं करूं .",
+   "(५) जेनी साधु सुवास आज जगमां श्रीजीस्वरूपे दीसे,",
+   "धर्म, ज्ञान, वैराग, भक्ति, महिमा एकै कथी श्रेष्ठ छे;",
+   "बोले बोल अमोल शब्द मधुरा साक्षात् सुधा तो झरे,",
+   "एवा ‘स्वामी हरिप्रसाद’ विभुने स्नेहे नमी सौ तरे.",
+   "(६) जेना दिव्य सुदिव्य जे चरितमां, विलसी हरि तो रह्या.",
+   "संबंधे थई शून्य जे विचरता, दासत्व धारी रह्या.",
+   "आपे अक्षरसुख भक्तजनने, सुहृद बनी सर्वदा.",
+   "एवा स्वामी प्रबोधदास गुरुने, भूलकां सहु सेवतां."
+  ]
+ },
+ {
+  "id": 2,
+  "title": "बोल्या श्री हरि रे",
+  "subtitle": "श्रीहरि वाणी - परम सिद्धांत",
+  "lines": [
+   "बोल्या श्री हरि रे, सांभळो नरनारी हरिजन; मारे एक वार्ता रे, सहुने संभळाव्यानुं छे मन... १",
+   "मारी मूरति रे, मारा लोक भोग ने मुक्त; सर्वे दिव्य छे रे, त्यां तो जोयानी छे जुक्त... २",
+   "मारूं धाम छे रे, अक्षर अमृत जेनुं नाम; सर्वे साम्रथी रे, शक्ति गुणे करी अभिराम... ३",
+   "अति तेजोमय रे, रवि शशी कोटिक वारणे जाय; शीतळ शांत छे रे, तेजनी उपमा नव देवाय... ४",
+   "तेमां हुं रहूं रे, द्विभुज दिव्य सदा साकार; दुर्लभ देवने रे, मारो कोई न पामे पार... ५",
+   "जीव ईश्वर तणो रे, माया काळ पुरुष प्रधान; सहुने वश करूं रे, सहुनो प्रेरक हुं भगवान... ६",
+   "अगणित विश्वनी रे, उत्पत्ति पालन प्रलय थाय; मारी मरजी विना रे, कोईथी तरणुं नव तोडाय... ७",
+   "एम मने जाणजो रे, मारां आश्रित सौ नरनारी; में तम आगळे रे, वार्ता सत्य कही छे मारी... ८",
+   "हुं तो तम कारण रे, आव्यो धाम थकी धरी देह; प्रेमानंदनो रे, वा’लो वरस्या अमृत मेह... ९",
+   "वळी सहु सांभळो रे, मारी वार्ता परम अनूप; परम सिद्धांत छे रे, सहुने हितकारी सुखरूप... १",
+   "सहु हरिभक्तने रे, जावुं होये मारे धाम; तो मने सेवजो रे, तमे शुद्ध भावे थई निष्काम... २",
+   "सहु हरिभक्तने रे, रहेवुं होये मारे पास; तो तमे मेलजो रे, मिथ्या पंचविषयनी आश... ३",
+   "मुज विना जाणजो रे, बीजा मायिक सहु आकार; प्रीति तोडजो रे, जूठां जाणी कु टुंब परिवार... ४",
+   "सहु तमे पाळजो रे, सर्वे द्रढ करी मारां नेम; तम पर रीझशे रे, धर्मने भक्ति करशे क्षेम... ५"
+  ]
+ },
+ {
+  "id": 3,
+  "title": "मारे मंदिर म्हाले रे",
+  "subtitle": "प्रेमलक्षणा भक्ति पद",
+  "lines": [
+   "हे... प्रेमतणा... प्रेमतणा... पगथारे पुष्पों पाथरीए हेत करी",
+   "हे... प्रेम सुगंध समीर लहेराये ए ज रे... हे मारो आतम नाचे प्रीत करी",
+   "हे बारे मंदिर म्हाले रे, बस तुं तुं तुं,",
+   "मारा मननो मोर तुं, मारा चित्तनो चोर तुं,",
+   "मारूं काळजुं कोरे तुं, बस तुं तुं... हे बारे मंदिर...",
+   "मारी मस्त मजा रे, बस तुं तुं तुं,",
+   "मारा व्योमनो सूरज तुं, शीतल शरदचंद्र तुं,",
+   "मारो ध्रुवतारक तुं, बस तुं तुं तुं... हे... बारे मंदिर...",
+   "मारा सुखनो समीर रे, बस तुं तुं तुं,",
+   "मारा सुखनुं वादळ तुं, मारा सुखनी वर्षा तुं,",
+   "मारो सुख कलापी तुं, बस तुं तुं तुं... हे... बारे मंदिर...",
+   "मारो जीवन-सागर रे, बस तुं तुं तुं,",
+   "मारी जीवननैया तुं, मारो जीवन नाविक तुं,",
+   "मारो जीवनआरो तुं, बस तुं तुं तुं...",
+   "हे बारे मंदिर म्हाले रे, बस तुं तुं तुं,",
+   "मारा मननो मोर तुं, मारा चित्तनो चोर तुं,",
+   "मारूं काळजुं कोरे तुं, बस तुं तुं... हे... बारे मंदिर..."
+  ]
+ },
+ {
+  "id": 4,
+  "title": "अब सौंप दिया इस जीवन का",
+  "subtitle": "समर्पण भाव भजन",
+  "lines": [
+   "अब सौंप दिया इस जीवन का, सब भार तुम्हारे हाथों में...",
+   "है जीत तुम्हारे हाथों में, और हार तुम्हारे हाथों में...",
+   "मेरा निश्चय है बस एक यही, एक बार तुम्हें पा जाऊँ मैं...",
+   "अर्पण कर दूँ दुनिया भर का, सब प्यार तुम्हारे चरणों में...",
+   "जो जग में रहूँ तो ऐसे रहूँ, ज्यों जल में कमल का फू ल रहे...",
+   "मेरे सब गुण दोष समर्पित हों, भगवान तुम्हारे हाथों में...",
+   "यदि मानव का मुझे जन्म मिले, तो तव चरणों का पुजारी बनूँ...",
+   "इस पूजक की एक-एक रग का, हो तार तुम्हारे हाथों में...",
+   "जब जब संसार का कै दी बनूँ, निष्काम भाव से कर्म करूँ ...",
+   "फिर अंत समय में प्राण तजूँ, साकार तुम्हारे हाथों में...",
+   "मुझमें और तुझमें भेद यही, मैं नर हूँ तुम नारायण हो,",
+   "मैं हूँ संसार के हाथों में, संसार तुम्हारे हाथों में..."
+  ]
+ },
+ {
+  "id": 5,
+  "title": "एकवार एकवार एकवार योगी",
+  "subtitle": "गुरु आह्वान गीत",
+  "lines": [
+   "एकवार एकवार एकवार योगी... बारे मंदिरिये आवो रे...",
+   "बारे मंदिरिये आवो मारा व्हाला...(२)",
+   "मारां आंगणियां शोभावो रे... एकवार... एकवार...",
+   "आवो तो आंगणामां साथिया पूरावुं...(२)",
+   "व्हाला... चंदननां लींपण लीं पावुं रे... एकवार... एकवार...",
+   "आसोपालवनां तोरण बंधावुं...(२)",
+   "व्हाला... अत्तरनां छांटणां छंटावुं रे... एकवार... एकवार...",
+   "रंगरंगना हुं तो गालीचा बिछावुं...(२)",
+   "व्हाला... सुगंधी फू लो वेरावुं रे... एकवार... एकवार...",
+   "सोना-रूपानो हुं तो हार बनावुं...(२)",
+   "व्हाला... हीरनी दोरीए गूंथावुं रे.. एकवार... एकवार...",
+   "ऊं चा आसने तमने पधरावुं...(२)",
+   "व्हाला... हैयाना हार हुं पहेरावुं रे... एकवार... एकवार...",
+   "प्रगट प्रभुजीनी आरती उतारुं...(२)",
+   "व्हाला... भवजळ हुं तरी जाउं रे... एकवार... एकवार..."
+  ]
+ },
+ {
+  "id": 6,
+  "title": "रंग लाग्यो स्वामीजी मारा हैये",
+  "subtitle": "गुरु महिमा ने प्रीति पद",
+  "lines": [
+   "रंग लाग्यो, स्वामीजी मारा हैये, के गुण तारा गइए...",
+   "व्हालीडा पूरा भावथी-अमे नथी रे बीतां संसारथी...",
+   "मुखडुं जोई ने मने रंग तारो लाग्यो, मारा जीवनमां में तो साथ तारो मांग्यो",
+   "ओ रे स्वामीजी कामण एुं शुं कीधुं, मनमां वसी ने मारूं मन हरी लीधुं...",
+   "हाथ दें झाल्यो - भवभय टाळ्यो - फे रो सुफळ थयो मारो...",
+   "रंग लाग्यो स्वामीजी मारा हैये...",
+   "लगनी लागी छे मने एक तारा नामनी, दुनियानी लोक लाज मारे नथी कामनी...",
+   "आतम अंतरमां प्रभु आवी बिराजो, भवभवनो साथवारो एक हवे तारो...",
+   "दर्शन आप्यां - दुःखडां टाळ्यां... धन्य जीवन दें बनाव्यां...",
+   "रंग लाग्यो स्वामीजी मारा हैये...",
+   "दर्शन तमारां सौनां दुःख देतां कापी, भक्ति करावे स्वामी आनंद आपी...",
+   "मनडां स्वामीजी सौनां पलमां ले पामी, सुखिया करीने सौने बक्षी दे माफी...",
+   "जगमां आवो जादुवाळो, क्यांय अमे ना भाळ्यो..",
+   "रंग लाग्यो स्वामीजी मारा हैये..."
+  ]
+ },
+ {
+  "id": 7,
+  "title": "तमे कळिया बळिया छळिया महाराज",
+  "subtitle": "श्रीजी लीला ने प्रार्थना",
+  "lines": [
+   "तमे कळिया, बळिया, छळिया महाराज, तारी लीलायुं अपरंपार...",
+   "तारी लीलायुं अपरंपार, तारी लीलायुं अपरंपार... तमे कळिया...",
+   "कर्तुम्, अकर्तुम् तारी करामात, कोईथी ना ए कळाये;",
+   "अन्यथा कर्तुम् तुं तो रे स्वामि, रेतीमां व्हाण चलावे रे... तमे कळिया...",
+   "मननो कळजुग माझा मूके त्यारे, हखळ-डखळ बहु लाये;",
+   "चारे जुगथी तुं तो रे जुदो, तारी सन्मुख चलावे रे... तमे कळिया...",
+   "भूलकांना पथनो हुं तो प्रवासी, भूलो पडूं हुं ज्यारे;",
+   "जगदीश तुं तो जीवने रे जाळवे, जतन करे अति व्हाले रे... तमे कळिया...",
+   "श्रीजी ! मारा हैयामां, तारी भक्ति भरी देजे...",
+   "स्वामि ! मारा हृदयामां, तारूं नाम भरी देजे...",
+   "तारा विना दुनियामां, हरि ! कोई नथी मारूं ...",
+   "भूलकुं बनूं तारूं , एवा आशिष दई देजे... श्रीजी ! मारा हैयामां..."
+  ]
+ },
+ {
+  "id": 8,
+  "title": "महबूब मेरे",
+  "subtitle": "दिव्य प्रीति पद",
+  "lines": [
+   "महबूब मेरे, महबूब मेरे",
+   "तू है तो दुनिया कितनी हसीं है",
+   "जो तू नहीं तो कु छ भी नहीं है",
+   "महबूब मेरे, महबूब मेरे",
+   "तू हो तो बढ़ जाती है क़ीमत मौसम की",
+   "तू हो तो बढ़ जाती है क़ीमत मौसम की",
+   "ये जो तेरी आँखें हैं, शोला-शबनम सी",
+   "यहीं मरना भी है मुझ को, मुझे जीना भी यहीं है",
+   "महबूब मेरे, महबूब मेरे",
+   "अरमां किसको जन्नत की रंगीं गलियों का",
+   "मुझको तेरा दामन है बिस्तर कलियों का",
+   "जहाँ पर हैं तेरी बाहें, मेरी जन्नत भी वहीं है",
+   "महबूब मेरे, महबूब मेरे"
+  ]
+ },
+ {
+  "id": 9,
+  "title": "अक्षरधामना अधिपतीश्री",
+  "subtitle": "परम प्रार्थना पद",
+  "lines": [
+   "अक्षरधामना अधिपतीश्री ! तुं छे अम आतम आधार,",
+   "चैतन्यशिल्पी गुरुहरिवर तुं एक ज छे अम आधार,",
+   "तारूं भूलकुं बनावजे अमने प्रार्थीए तव चरणोमां सदा...",
+   "अनंतलोक ने अनंतधाम छे, अवांतरमां अमे क्यां?",
+   "अनंत ब्रह्मांडना अनंत जीवो, एमां हमारी हस्ती क्यां?",
+   "तारी दिव्य शक्ति आँगळ, अमारूं अस्तित्व क्यां ? (२)",
+   "तारी आँगळ शून्य अमे सौ, तुं छे सर्वोपरी सम्राट... तारूं भूलकुं बनावजे...",
+   "जे कांई आव्युं ने आवी रह्युं छे अने जे आवशे आतममां,",
+   "ए सर्वेनो दाता तुं छे, जाग्रत राखजे जीवनमां,",
+   "तारे आधीन छे समग्र तंत्र, व्यापक छे तुं समस्तमां (२)",
+   "अमे तो तारूं सर्जन छीए, तुं छे अमारो सर्जनहार... तारूं भूलकुं बनावजे...",
+   "अति सामर्थी तारी छतांये सौनी चरणरज बन्यो तुं,",
+   "कल्पनातीथ स्वरूप तारूं तोये, भक्तोनूं भूलकुं बन्यो तुं,",
+   "दासना दास थईने रह्या जे, एना रंगे राच्यो तुं (२)",
+   "तारा भक्तोनी भक्ति करवा, बळ देजे तुं अखूट अपार... तारूं भूलकुं बनावजे...",
+   "सदा दिव्य साकार स्वरूप तुं, संबंधवाळा सहु दिव्य ज छे,",
+   "मायिक मनबुद्धिए करीने ए दिव्य दर्शन थाय न मने,",
+   "कृ पा करीने दृष्टि तुं देजे, तारा सहुए दिव्य मनाय, तुजमां सहज खोवाई जवाय,",
+   "सुहृदसिंधु ! आत्મીય-संबंध करवा, करीए सहुनो स्वीकार... तारूं भूलकुं बनावजे..."
+  ]
+ }
+];
+/* ---------------------------------------------------------------------------------------- */
+const KEY='bhajan_songs_v1';
+const $=id=>document.getElementById(id);
+let songs=load(), cur=songs[0]?.id, idx=0, editing=null;
+
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length)return s}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_SONGS))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(songs))}catch(e){}}
+const song=()=>songs.find(s=>s.id===cur)||songs[0];
+
+function renderList(){
+ const t=$('q').value.trim().toLowerCase();
+ $('list').innerHTML='';
+ songs.filter(s=>!t||(s.title+' '+(s.subtitle||'')+' '+(s.lines[0]||'')).toLowerCase().includes(t)).forEach(s=>{
+  const d=document.createElement('div');d.className='item'+(s.id===cur?' on':'');
+  d.innerHTML='<b></b><small></small>';d.firstChild.textContent=s.title;d.lastChild.textContent=s.subtitle||'';
+  d.onclick=()=>{openSong(s.id);$('side').classList.remove('open')};
+  $('list').appendChild(d);
+ });
+}
+function openSong(id){cur=id;idx=0;renderSong();renderList()}
+function renderSong(){
+ const s=song();if(!s){$('stage').innerHTML='';return}
+ $('ttl').textContent=s.title;
+ const st=$('stage');st.innerHTML='';
+ const h=document.createElement('div');h.className='hd';
+ h.innerHTML='<h2></h2><div></div>';h.firstChild.textContent=s.title;h.lastChild.textContent=s.subtitle||'';
+ st.appendChild(h);
+ s.lines.forEach((l,i)=>{const p=document.createElement('div');p.className='ln';p.textContent=l;p.onclick=()=>go(i);st.appendChild(p)});
+ st.scrollTop=0;go(0,true);
+}
+function go(i,instant){
+ const s=song();if(!s||!s.lines.length)return;
+ idx=Math.max(0,Math.min(s.lines.length-1,i));
+ const els=document.querySelectorAll('.ln');
+ els.forEach((e,k)=>e.classList.toggle('on',k===idx));
+ $('prog').style.width=((idx+1)/s.lines.length*100)+'%';
+ center(instant);
+}
+function center(instant){
+ const e=document.querySelectorAll('.ln')[idx],st=$('stage');if(!e)return;
+ const r=e.getBoundingClientRect(),sr=st.getBoundingClientRect();
+ const top=st.scrollTop+(r.top-sr.top)-sr.height/2+r.height/2;
+ st.scrollTo({top:Math.max(0,top),behavior:instant?'auto':'smooth'});
+}
+function setFs(v){v=Math.max(18,Math.min(90,+v));document.documentElement.style.setProperty('--fs',v+'px');$('fz').value=v;setTimeout(()=>center(true),60)}
+function toggleFull(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()}
+
+document.addEventListener('keydown',e=>{
+ if(e.target.matches('input,textarea')||$('dlg').open)return;
+ const k=e.key;
+ if([' ','ArrowDown','PageDown'].includes(k)){e.preventDefault();go(idx+1)}
+ else if(['ArrowUp','PageUp'].includes(k)){e.preventDefault();go(idx-1)}
+ else if(k==='Home'||k==='r'||k==='R'){e.preventDefault();go(0)}
+ else if(k==='End'){e.preventDefault();go(1e9)}
+ else if(k==='f'||k==='F'){toggleFull()}
+});
+$('dn').onclick=()=>go(idx+1);$('up').onclick=()=>go(idx-1);
+$('fz').oninput=e=>setFs(e.target.value);
+$('fp').onclick=()=>setFs(+$('fz').value+4);$('fm').onclick=()=>setFs(+$('fz').value-4);
+$('full').onclick=toggleFull;
+$('menu').onclick=()=>$('side').classList.toggle('open');
+$('q').oninput=renderList;
+window.addEventListener('resize',()=>center(true));
+
+/* editor: stored in this browser's localStorage */
+function openEditor(s){
+ editing=s;$('et').value=s?s.title:'';$('es').value=s?s.subtitle||'':'';$('el').value=s?s.lines.join('\n'):'';
+ $('edel').style.display=s?'':'none';$('dlg').showModal();
+}
+$('edit').onclick=()=>openEditor(song());
+$('new').onclick=()=>openEditor(null);
+$('ecan').onclick=()=>$('dlg').close();
+$('esave').onclick=()=>{
+ const lines=$('el').value.split('\n').map(l=>l.trim()).filter(Boolean),title=$('et').value.trim()||'Untitled';
+ if(editing){Object.assign(editing,{title,subtitle:$('es').value.trim(),lines});cur=editing.id}
+ else{const n={id:'c'+Date.now(),title,subtitle:$('es').value.trim(),lines};songs.push(n);cur=n.id}
+ save();$('dlg').close();idx=0;renderSong();renderList();
+};
+$('edel').onclick=()=>{
+ if(!editing||!confirm('Delete this bhajan?'))return;
+ songs=songs.filter(s=>s!==editing);cur=songs[0]?.id;save();$('dlg').close();renderSong();renderList();
+};
+$('reset').onclick=()=>{
+ if(!confirm('Discard all edits and restore the original PDF lyrics?'))return;
+ try{localStorage.removeItem(KEY)}catch(e){}
+ songs=load();cur=songs[0]?.id;renderSong();renderList();
+};
+renderList();renderSong();
+</script>
+</body>
+</html>
