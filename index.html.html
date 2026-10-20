@@ -35,18 +35,22 @@ main{flex:1;position:relative;min-width:0}
 .ln.on{opacity:1;color:var(--accent);font-weight:700;transform:scale(1.1);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 50%,transparent)}
 .hd{text-align:center;color:var(--dim);margin:0 auto 6vh}
 .hd h2{margin:0;font-size:calc(var(--fs)*.9);color:var(--text)}
-.nav{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
-.nav button{width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--btn) 85%,transparent);border:1px solid var(--line);font-size:22px;cursor:pointer}
+.nav{z-index:3;position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
+.nav button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--btn) 85%,transparent);border:1px solid var(--line);font-size:22px;cursor:pointer}
 .nav button:active{background:var(--accent);color:#000}
-#prog{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .25s}
+#prog{z-index:3;position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .25s}
 dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;width:min(640px,94vw);padding:16px}
 dialog::backdrop{background:#000a}
 dialog input,dialog textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0}
 dialog textarea{height:24vh;line-height:1.6}
 .row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
-#menu{display:none}
+#menu{display:inline-block}
+aside{transition:transform .25s,margin-left .25s}
+body.side-hidden aside{margin-left:-300px}
+#scrim{display:none}
 @media(max-width:800px){
- #menu{display:inline-block}
+ body.side-hidden aside{margin-left:0}
+ #scrim.show{display:block;position:absolute;inset:0;z-index:4;background:#0008}
  aside{position:absolute;z-index:5;height:100%;transform:translateX(-100%);width:84%}
  aside.open{transform:none}
  .fs input{width:70px}.fs span{display:none}
@@ -93,10 +97,11 @@ main::before{opacity:1}
  <button class="btn" id="pr" style="width:100%">Reset colours</button></div>
 <div id="app">
  <aside id="side">
-  <div class="top"><input id="q" type="search" placeholder="Search title or first line…"><button class="btn" id="new" title="Add bhajan">＋</button></div>
+  <div class="top"><input id="q" type="search" placeholder="Search title or first line…"><button class="btn" id="new" title="Add bhajan">＋</button><button class="btn" id="hide" title="Hide list (S)">«</button></div>
   <div id="list"></div>
-  <div class="foot"><span>Space/↓ next · ↑ prev · R reset</span><a id="reset">Reset data</a></div>
+  <div class="foot"><span>Space/↓ next · ↑ prev · R reset · S list</span><a id="reset">Reset data</a></div>
  </aside>
+ <div id="scrim"></div>
  <main>
   <div id="sparks"></div><div id="stage"></div>
   <div class="nav"><button id="up" aria-label="Previous">↑</button><button id="dn" aria-label="Next">↓</button></div>
@@ -483,6 +488,266 @@ const DEFAULT_SONGS = [
    "Kru paa kareene drushti tun deje, taaraa sahue divy manaay, tujmaan sahaj khovaaee javaay,",
    "Suhrudsindhu ! aatmeey-sambandh karvaa, kareee sahuno sveekaar... taaroon bhoolkun banaavje..."
   ]
+ },
+ {
+  "id": 10,
+  "title": "अक्षरथी आव्या मारा नाथ…",
+  "subtitle": "राग: गोरी राधा ने कालो कान…",
+  "lines": [
+   "धीमा दोहा",
+   "थनगनतो आ आत्मा रे, आजे छे लीला-लहेर,",
+   "सहुं बन्युं अक्षर-रूप आजे, गांव होय के शहर,",
+   "संबंध थयो प्रबोधस्वामीजी नो रे, वरसी अमृत मेहर,",
+   "अक्षर-सुखनां पूर उमट्यां रे, आजे घेर-घेर।",
+   "हे हरि, हे हरि, हे हरि, स्वामीहरि… (४)",
+   "भजन शुरू",
+   "अक्षरथी आव्या मारा नाथ,",
+   "अक्षरने लाव्या एनी साथ,",
+   "सहजानंद छे, गुणातीतानंद छे,",
+   "प्रगट स्वरूपे जोओ आज।",
+   "अक्षरथी हरि आव्या, अक्षरने साथे लाव्या,",
+   "अक्षर-पुरुषोत्तमनी जोड़ रे…",
+   "भक्तोने सुखिया आज, अंतरथी करवा काज,",
+   "आव्या छे पूरा करवा कोड रे…",
+   "अक्षरने ओळखावीने, हरि कहे,",
+   "“गुरु गुणातीतजी, अमारुं छे अक्षरधाम”…",
+   "अक्षरथी आव्या मारा नाथ…",
+   "अगला अंतरा",
+   "शास्त्रीजी महाराज आव्या, योगीजीने संगे लाव्या,",
+   "स्वामी-श्रीजीनी ए तो जोड़ रे…",
+   "अक्षर-पुरुषोत्तमनी युगल उपासनानो,",
+   "स्थाप्यो छे सिद्धांत अजोड़ रे…",
+   "जोगीने ओळखावी शास्त्रीजी कहे,",
+   "“हुं ते जोगी ने जोगी ते हुं” साक्षात…",
+   "अक्षरथी आव्या मारा नाथ…",
+   "हे हरि, हे हरि, हे हरि, स्वामीहरि… (४)",
+   "अगला अंतरा",
+   "हरिप्रसादस्वामी आव्या, प्रबोधस्वामीने लाव्या,",
+   "स्वामी-हरिनी ए तो जोड़ रे…",
+   "गुणातीत साधुतानां ए छे शिरोमणि, (पहली बार)",
+   "अनंत ब्रह्मांडोने वारी-फेरी नाखी दे तोय, (दूसरी बार)",
+   "आवे ना कोई एनी तोल रे…",
+   "संबंधे सुखियां कर्या हरिजी ए,",
+   "हरि रह्या छे अखंड, प्रगट प्रबोधस्वामीमां…",
+   "अक्षरथी आव्या मारा नाथ,",
+   "अक्षरने लाव्या एनी साथ,",
+   "हरिप्रसादजीने अखंड धारणार,",
+   "प्रबोधस्वामी महाराज…",
+   "तेज दोहा",
+   "हे…",
+   "अक्षर-पुरुषोत्तम आजे, दर्शन दान आपी रह्या,",
+   "हैयां सहुनां पावन करी, अक्षर मंदिर बांधी रह्या,",
+   "हरिप्रसादस्वामी महाराजा, अक्षरधामे बिराजी रह्या,",
+   "प्रबोधस्वामीना स्वरूपमां, धाम बक्षिश आपी रह्या…",
+   "जी रे… धाम बक्षिश आपी रह्या…",
+   "हे जी रे… धाम बक्षिश आपी रह्या…"
+  ],
+  "titleRoman": "Akshrathee aavyaa maaraa naath…",
+  "roman": [
+   "Dheemaa dohaa",
+   "Thanganto aa aatmaa re, aaje chhe leelaa-laher,",
+   "Sahun banyun akshar-roop aaje, gaanv hoy ke shahar,",
+   "Sambandh thayo prabodhsvaameejee no re, varsee amrut mehar,",
+   "Akshar-sukhnaan poor umtyaan re, aaje gher-gher",
+   "He hari, he hari, he hari, svaameehri… (4)",
+   "Bhajan shuroo",
+   "Akshrathee aavyaa maaraa naath,",
+   "Akshrane laavyaa enee saath,",
+   "Sahjaanand chhe, gunaateetaanand chhe,",
+   "Pragat svaroope joo aaj",
+   "Akshrathee hari aavyaa, akshrane saathe laavyaa,",
+   "Akshar-purushottmanee jor re…",
+   "Bhaktone sukhiyaa aaj, antrathee karvaa kaaj,",
+   "Aavyaa chhe pooraa karvaa kod re…",
+   "Akshrane olkhaaveene, hari kahe,",
+   "“guru gunaateetjee, amaarun chhe akshradhaam”…",
+   "Akshrathee aavyaa maaraa naath…",
+   "Aglaa antraa",
+   "Shaastreejee mahaaraaj aavyaa, yogeejeene sange laavyaa,",
+   "Svaamee-shreejeenee e to jor re…",
+   "Akshar-purushottmanee yugal upaasnaano,",
+   "Sthaapyo chhe siddhaant ajor re…",
+   "Jogeene olkhaavee shaastreejee kahe,",
+   "“hun te jogee ne jogee te hun” saakshaat…",
+   "Akshrathee aavyaa maaraa naath…",
+   "He hari, he hari, he hari, svaameehri… (4)",
+   "Aglaa antraa",
+   "Hariprsaadsvaamee aavyaa, prabodhsvaameene laavyaa,",
+   "Svaamee-harinee e to jor re…",
+   "Gunaateet saadhutaanaan e chhe shiromni, (pahlee baar)",
+   "Anant brahmaandone vaaree-pheree naakhee de toy, (doosree baar)",
+   "Aave naa koee enee tol re…",
+   "Sambandhe sukhiyaan karyaa harijee e,",
+   "Hari rahyaa chhe akhand, pragat prabodhsvaameemaan…",
+   "Akshrathee aavyaa maaraa naath,",
+   "Akshrane laavyaa enee saath,",
+   "Hariprsaadjeene akhand dhaarnaar,",
+   "Prabodhsvaamee mahaaraaj…",
+   "Tej dohaa",
+   "He…",
+   "Akshar-purushottam aaje, darshan daan aapee rahyaa,",
+   "Haiyaan sahunaan paavan karee, akshar mandir baandhee rahyaa,",
+   "Hariprsaadsvaamee mahaaraajaa, akshradhaame biraajee rahyaa,",
+   "Prabodhsvaameenaa svaroopmaan, dhaam bakshish aapee rahyaa…",
+   "Jee re… dhaam bakshish aapee rahyaa…",
+   "He jee re… dhaam bakshish aapee rahyaa…"
+  ]
+ },
+ {
+  "id": 11,
+  "title": "व्हाला तारी कृपा…",
+  "subtitle": "",
+  "lines": [
+   "दोहा",
+   "हेय… विलसित चारणारविंद कोमल याति प्रेमकंद… धायवत भाव मीतट फंद छंद स्तावन बोले…",
+   "हेय… प्रसरत जे पद प्रसंग पुण्य भरित सरित गेंग अग्विनाश परिशांग होव तांग डोले…",
+   "हेय… राजात माही उर्ग वैयिख वज्र वख सहित प्रेख… ब्रह्म्हानंद देख देख लेखत कुर्बानी…",
+   "हेय… जय जय घनश्याम श्याम अंबुज ध्राग उद उगम… सुंदर सुख दाम नाम सावरे गुमानी। (३)",
+   "हरि तारी कृपा छे घणी… ने मारो तुज छे धणी। (२)",
+   "हे तारी करुणा नो पार नहि… लाय ए तारु नाम… करीये एज काम… जेमा तारो राजीपो (१)",
+   "खम्मा घणी मारा व्हाला ने… खम्मा घणी मारा हरि ने… (१)",
+   "आखियो अमारी वामणी ने माइक… तोये ते दर्शन दिधा अमायिक… (१)",
+   "व्हाला तु तो अक्षर ना वाशी… ने अनंत सुखनो राशी… (१)",
+   "तारा महिमा नो पार नहि… तो केम पामीये। बस एज याचिये… के मळे तारो राजीपो। (१)",
+   "खम्मा घणी मारा व्हाला ने… खम्मा घणी मारा हरि ने… (१)",
+   "ओ एवी अमुल्लख जो ने मूर्ति छे तारी… हे आनंद एनो अनमोल भारी (१)",
+   "व्हाला हु तो करूं पार्थना… ने मारी एज याचना (१)",
+   "के मारा अंतर मां कायम रहजो… हरि… मांगु फारी फारी फारी एक तारो राजीपो… (१)",
+   "खम्मा घणी मारा व्हाला ने… खम्मा घणी मारा हरि ने… (१)",
+   "अरे व्हाला अम्म सरखा तो तुजने आनेक छे, अनेक नो धणी तुज हरि एक छे… (१) ताक दिना धीन धा…",
+   "व्हाला अमे तारा ज बाल, लेजो अमारी संभाल… (१)",
+   "अमे ताराज आसरे रहीये सदा… पन आपो सर्वदा… रहे तारो राजीपो… व्हाला तारो राजीपो…",
+   "हरि तारी कृपा छे घणी… ने मारो तुज छे धणी। (२)",
+   "हे तारी करुणा नो पार नहि… लाय ए तारु नाम… करीये एज काम… जेमा तारो राजीपो (१)",
+   "खम्मा घणी मारा व्हाला ने… खम्मा घणी मारा हरि ने… (२)"
+  ],
+  "titleRoman": "Vhaalaa taaree krupaa…",
+  "roman": [
+   "Dohaa",
+   "Hey… vilsit chaarnaarvind komal yaati premkand… dhaayvat bhaav meetat phand chhand staavan bole…",
+   "Hey… prasrat je pad prasang puny bharit sarit geng agvinaash parishaang hov taang dole…",
+   "Hey… raajaat maahee urg vaiyikh vajr vakh sahit prekh… brahmhaanand dekh dekh lekhat kurbaanee…",
+   "Hey… jay jay ghanshyaam shyaam ambuj dhraag ud ugam… sundar sukh daam naam saavre gumaanee (3)",
+   "Hari taaree krupaa chhe ghanee… ne maaro tuj chhe dhanee (2)",
+   "He taaree karunaa no paar nahi… laay e taaru naam… kareeye ej kaam… jemaa taaro raajeepo (1)",
+   "Khammaa ghanee maaraa vhaalaa ne… khammaa ghanee maaraa hari ne… (1)",
+   "Aakhiyo amaaree vaamnee ne maaik… toye te darshan didhaa amaayik… (1)",
+   "Vhaalaa tu to akshar naa vaashee… ne anant sukhno raashee… (1)",
+   "Taaraa mahimaa no paar nahi… to kem paameeye bas ej yaachiye… ke male taaro raajeepo (1)",
+   "Khammaa ghanee maaraa vhaalaa ne… khammaa ghanee maaraa hari ne… (1)",
+   "O evee amullakh jo ne moorti chhe taaree… he aanand eno anmol bhaaree (1)",
+   "Vhaalaa hu to karoon paarthnaa… ne maaree ej yaachnaa (1)",
+   "Ke maaraa antar maan kaayam rahjo… hari… maangu phaaree phaaree phaaree ek taaro raajeepo… (1)",
+   "Khammaa ghanee maaraa vhaalaa ne… khammaa ghanee maaraa hari ne… (1)",
+   "Are vhaalaa amm sarkhaa to tujne aanek chhe, anek no dhanee tuj hari ek chhe… (1) taak dinaa dheen dhaa…",
+   "Vhaalaa ame taaraa ja baal, lejo amaaree sambhaal… (1)",
+   "Ame taaraaj aasre raheeye sadaa… pan aapo sarvdaa… rahe taaro raajeepo… vhaalaa taaro raajeepo…",
+   "Hari taaree krupaa chhe ghanee… ne maaro tuj chhe dhanee (2)",
+   "He taaree karunaa no paar nahi… laay e taaru naam… kareeye ej kaam… jemaa taaro raajeepo (1)",
+   "Khammaa ghanee maaraa vhaalaa ne… khammaa ghanee maaraa hari ne… (2)"
+  ]
+ },
+ {
+  "id": 12,
+  "title": "આજ મેરે પ્રભુ ઘર આવશેં",
+  "subtitle": "",
+  "lines": [
+   "ચોખ પૂરાવો માટી રંગાવો,",
+   "આજ મેરે પ્રભુ ઘર આવશેં",
+   "ખબર સુનાળી જો,",
+   "ખુશી યે બતાઓ જો,",
+   "આજ મેરે પ્રભુ ઘર આવશેં ॥ (૨ વાર)",
+   "હેરી સખી મંગલ ગાવો રી,",
+   "ધરતી અંબર સજાઓ રી,",
+   "ઉતરેગી આજ મેરે પ્રભુ કી સવારી,",
+   "હર કોઈ કાજલ લાયો રે,",
+   "મોહે કાલા ટીકા લગાયો રી,",
+   "ઉનકી છબ સે દિલ મેં તો પ્યારી,",
+   "લક્ષ્મી જી વારે, નજર ઉતારો,",
+   "આજ મેરે પ્રભુ ઘર આવશેં ॥ (૨ વાર)",
+   "રંગો સે રંગ મિલે,",
+   "નસે નસે ઢંગ ખિલે,",
+   "ખુશી આજ દ્વારે મેરે ડાલે હે ડેરા,",
+   "પીહૂ પીહૂ પપીહા રટે,",
+   "કુહૂ કુહૂ કોયલ જપે,",
+   "Aangan aangan hai pariyone ghera",
+   "Aangan aangan MUKTONE ghera",
+   "Aaj mere prabhu ghar aayenge",
+   "Aaj mere SWAMI ghar aayenge",
+   "ચોખ પૂરાવો માટી રંગાવો,",
+   "આજ મેરે પ્રભુ ઘર આવશેં,",
+   "ખબર સુનાળી જો,",
+   "ખુશી યે બતાઓ જો,",
+   "આજ મેરે પ્રભુ ઘર આવશેં ॥ (૨ વાર)"
+  ],
+  "titleRoman": "Aaj mere prabhu ghar aavshen",
+  "roman": [
+   "Chokh pooraavo maatee rangaavo,",
+   "Aaj mere prabhu ghar aavshen",
+   "Khabar sunaalee jo,",
+   "Khushee ye bataao jo,",
+   "Aaj mere prabhu ghar aavshen (2 vaar)",
+   "Heree sakhee mangal gaavo ree,",
+   "Dhartee ambar sajaao ree,",
+   "Utregee aaj mere prabhu kee savaaree,",
+   "Har koee kaajal laayo re,",
+   "Mohe kaalaa teekaa lagaayo ree,",
+   "Unkee chhab se dil men to pyaaree,",
+   "Lakshmee jee vaare, najar utaaro,",
+   "Aaj mere prabhu ghar aavshen (2 vaar)",
+   "Rango se rang mile,",
+   "Nase nase dhang khile,",
+   "Khushee aaj dvaare mere daale he deraa,",
+   "Peehoo peehoo papeehaa rate,",
+   "Kuhoo kuhoo koyal jape,",
+   "Aangan aangan hai pariyone ghera",
+   "Aangan aangan MUKTONE ghera",
+   "Aaj mere prabhu ghar aayenge",
+   "Aaj mere SWAMI ghar aayenge",
+   "Chokh pooraavo maatee rangaavo,",
+   "Aaj mere prabhu ghar aavshen,",
+   "Khabar sunaalee jo,",
+   "Khushee ye bataao jo,",
+   "Aaj mere prabhu ghar aavshen (2 vaar)"
+  ]
+ },
+ {
+  "id": 13,
+  "title": "सघळी चिंता तुजने सोंपी",
+  "subtitle": "",
+  "lines": [
+   "सघळी चिंता तुजने सोंपी, मुक्त बनी फरवानो,",
+   "लगनी तारी लागी मने… स्वामी… हरि स्वामी रे…(2)",
+   "हुं आव्यो तारे द्वार, छोडी घरबार,",
+   "शरणुं तारुं लीधुं छे… जीवन मारुं घडवाने,",
+   "अमी भरेली आंखे करजो, अंतरमां अजवाळां;",
+   "लगनी तारी लागी मने…",
+   "आव्यो छे बाळ, खोलो दयाद्वार,",
+   "जेने कोई नथी आधार, तेनी लो तमे संभाळ,",
+   "आ रूदियामां हरि विनानो रंग नथी चडवानो;",
+   "लगनी तारी लागी मने…",
+   "सेवानुं धाम, मारुं जीवन सौभाग्य,",
+   "जादुगर तुं न्यारो छे… प्राणोथी पण प्यारो छे,",
+   "तनमननो तंबूरो सजावी जपुं तमारी माळा;",
+   "लगनी तारी लागी मने…"
+  ],
+  "titleRoman": "Saghlee chintaa tujne sompee",
+  "roman": [
+   "Saghlee chintaa tujne sompee, mukt banee pharvaano,",
+   "Lagnee taaree laagee mane… svaamee… hari svaamee re…(2)",
+   "Hun aavyo taare dvaar, chhodee gharbaar,",
+   "Sharnun taarun leedhun chhe… jeevan maarun ghadvaane,",
+   "Amee bharelee aankhe karjo, antramaan ajvaalaan;",
+   "Lagnee taaree laagee mane…",
+   "Aavyo chhe baal, kholo dayaadvaar,",
+   "Jene koee nathee aadhaar, tenee lo tame sambhaal,",
+   "Aa roodiyaamaan hari vinaano rang nathee chadvaano;",
+   "Lagnee taaree laagee mane…",
+   "Sevaanun dhaam, maarun jeevan saubhaagy,",
+   "Jaadugar tun nyaaro chhe… praanothee pan pyaaro chhe,",
+   "Tanmanno tambooro sajaavee japun tamaaree maalaa;",
+   "Lagnee taaree laagee mane…"
+  ]
  }
 ];
 /* ---------------------------------------------------------------------------------------- */
@@ -490,7 +755,16 @@ const KEY='bhajan_songs_v1';
 const $=id=>document.getElementById(id);
 let songs=load(), cur=songs[0]?.id, idx=0, editing=null;
 
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length){s.forEach(x=>{const d=DEFAULT_SONGS.find(y=>y.id===x.id);if(d&&!x.roman&&d.lines.length===x.lines.length){x.roman=d.roman;x.titleRoman=d.titleRoman}});return s}}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_SONGS))}
+function load(){
+ let s=null;try{s=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+ if(!Array.isArray(s)||!s.length)return JSON.parse(JSON.stringify(DEFAULT_SONGS));
+ let seen=null;try{seen=JSON.parse(localStorage.getItem('bhajan_seen_v1'))}catch(e){}
+ if(!Array.isArray(seen))seen=s.map(x=>x.id);
+ DEFAULT_SONGS.forEach(d=>{if(!seen.includes(d.id)&&!s.some(x=>x.id===d.id))s.push(JSON.parse(JSON.stringify(d)))});
+ s.forEach(x=>{const d=DEFAULT_SONGS.find(y=>y.id===x.id);if(d&&!x.roman&&d.lines.length===x.lines.length){x.roman=d.roman;x.titleRoman=d.titleRoman}});
+ try{localStorage.setItem('bhajan_seen_v1',JSON.stringify(DEFAULT_SONGS.map(d=>d.id)));localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}
+ return s;
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(songs))}catch(e){}}
 const song=()=>songs.find(s=>s.id===cur)||songs[0];
 
@@ -500,7 +774,7 @@ function renderList(){
  songs.filter(s=>!t||(s.title+' '+(s.titleRoman||'')+' '+(s.subtitle||'')+' '+(s.lines[0]||'')+' '+((s.roman&&s.roman[0])||'')).toLowerCase().includes(t)).forEach(s=>{
   const d=document.createElement('div');d.className='item'+(s.id===cur?' on':'');
   d.innerHTML='<b></b><small></small>';d.firstChild.textContent=s.title;d.lastChild.textContent=s.subtitle||'';
-  d.onclick=()=>{openSong(s.id);$('side').classList.remove('open')};
+  d.onclick=()=>{openSong(s.id);if(mobile())toggleSide(false)};
   $('list').appendChild(d);
  });
 }
@@ -544,12 +818,20 @@ document.addEventListener('keydown',e=>{
  else if(k==='Home'||k==='r'||k==='R'){e.preventDefault();go(0)}
  else if(k==='End'){e.preventDefault();go(1e9)}
  else if(k==='f'||k==='F'){toggleFull()}
+ else if(k==='s'||k==='S'){toggleSide()}
+ else if(k==='Escape'){toggleSide(false)}
 });
 $('dn').onclick=()=>go(idx+1);$('up').onclick=()=>go(idx-1);
 $('fz').oninput=e=>setFs(e.target.value);
 $('fp').onclick=()=>setFs(+$('fz').value+4);$('fm').onclick=()=>setFs(+$('fz').value-4);
 $('full').onclick=toggleFull;
-$('menu').onclick=()=>$('side').classList.toggle('open');
+const mobile=()=>matchMedia('(max-width:800px)').matches;
+function toggleSide(force){
+ if(mobile()){const o=force!==undefined?force:!$('side').classList.contains('open');$('side').classList.toggle('open',o);$('scrim').classList.toggle('show',o)}
+ else{const h=force!==undefined?!force:!document.body.classList.contains('side-hidden');document.body.classList.toggle('side-hidden',h);try{localStorage.setItem('bhajan_side_v1',h?'0':'1')}catch(e){}}
+ setTimeout(()=>center(true),300);
+}
+$('menu').onclick=()=>toggleSide();$('hide').onclick=()=>toggleSide(false);$('scrim').onclick=()=>toggleSide(false);
 $('q').oninput=renderList;
 window.addEventListener('resize',()=>center(true));
 
@@ -573,7 +855,7 @@ $('edel').onclick=()=>{
 };
 $('reset').onclick=()=>{
  if(!confirm('Discard all edits and restore the original PDF lyrics?'))return;
- try{localStorage.removeItem(KEY)}catch(e){}
+ try{localStorage.removeItem(KEY);localStorage.removeItem('bhajan_seen_v1')}catch(e){}
  songs=load();cur=songs[0]?.id;renderSong();renderList();
 };
 /* per-bhajan script mode */
@@ -596,6 +878,7 @@ const DK='bhajan_decor_v1';let decor=true;try{decor=localStorage.getItem(DK)!=='
 function applyDecor(){document.body.classList.toggle('nodecor',!decor);$('decor').checked=decor}
 $('decor').onchange=e=>{decor=e.target.checked;try{localStorage.setItem(DK,decor?'1':'0')}catch(_){}applyDecor()};
 applyDecor();
+try{if(localStorage.getItem('bhajan_side_v1')==='0')document.body.classList.add('side-hidden')}catch(e){}
 applyTheme();
 renderList();renderSong();
 </script>
